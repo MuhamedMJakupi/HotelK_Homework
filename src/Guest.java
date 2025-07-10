@@ -23,12 +23,6 @@ public class Guest {
         return email;
     }
 
-    //diff version
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (!(obj instanceof Guest other)) return false;
-//        return guestID.equals(other.guestID);
-//    }
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

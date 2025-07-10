@@ -41,15 +41,6 @@ public class Room {
     }
 
 
-
-
-    //diff option
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (!(obj instanceof Room other)) return false;
-//        return roomID.equals(other.roomID);
-//    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

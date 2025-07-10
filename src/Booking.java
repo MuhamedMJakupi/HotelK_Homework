@@ -28,7 +28,6 @@ public class Booking {
     public LocalDate getCheckOut() { return checkOut; }
 
 
-
     public BigDecimal calculateTotalCost() {
         long nights = ChronoUnit.DAYS.between(checkIn, checkOut);
         return room.getNightlyRate().multiply(BigDecimal.valueOf(nights));
@@ -40,14 +39,6 @@ public class Booking {
                 + ", From: " + checkIn + " To: " + checkOut + ", Total: " + calculateTotalCost() + "}";
     }
 
-    //diff version
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (!(obj instanceof Booking other)) return false;
-//        return bookingID.equals(other.bookingID);
-//    }
-
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -55,7 +46,6 @@ public class Booking {
         Booking other = (Booking) obj;
         return bookingID.equals(other.bookingID);
     }
-
 
     @Override
     public int hashCode() {
