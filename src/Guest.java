@@ -31,8 +31,6 @@ public class Guest {
         return guestID.equals(other.guestID);
     }
 
-
-
     @Override
     public int hashCode() {
         return guestID.hashCode();

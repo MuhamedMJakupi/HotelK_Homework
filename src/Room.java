@@ -1,8 +1,12 @@
+import Interface.Bookable;
+import Interface.Chargeable;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class Room {
+//Room implemets bookable
+public class Room implements Bookable, Chargeable {
     private final String roomID;
     private final RoomType type;
     private final BigDecimal nightlyRate;
@@ -58,5 +62,20 @@ public class Room {
     @Override
     public String toString() {
         return "Room{" + roomID + ", " + type + ", Rate: " + nightlyRate + ", Available: " + isAvailable + "}";
+    }
+
+    @Override
+    public boolean isAvailable(LocalDate checkIn, LocalDate checkOut) {
+        return isAvailable;
+    }
+
+    @Override
+    public void markAsBooked() {
+        this.isAvailable = false;
+    }
+
+    @Override
+    public BigDecimal getCost() {
+        return nightlyRate;
     }
 }

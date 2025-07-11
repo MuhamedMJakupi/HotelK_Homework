@@ -1,9 +1,12 @@
+import Interface.Bookable;
+import Interface.Chargeable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
-public class Booking {
+//Booking implements chargeable
+public class Booking implements Chargeable {
     private final String bookingID;
     private final Room room;
     private final Guest guest;
@@ -14,7 +17,7 @@ public class Booking {
         if (!checkOut.isAfter(checkIn)) {
             throw new IllegalArgumentException("Check-out must be after check-in.");
         }
-        this.bookingID = UUID.randomUUID().toString(); // This generates a unique ID
+        this.bookingID = UUID.randomUUID().toString();
         this.room = room;
         this.guest = guest;
         this.checkIn = checkIn;
@@ -53,5 +56,8 @@ public class Booking {
     }
 
 
-
+    @Override
+    public BigDecimal getCost() {
+        return calculateTotalCost();
+    }
 }
