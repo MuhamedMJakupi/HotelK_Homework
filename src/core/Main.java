@@ -1,6 +1,7 @@
+package core;
+
 import Exceptions.InvalidBookingDatesException;
 import Exceptions.RoomUnavailableException;
-import Interface.Chargeable;
 import Service.LaundryService;
 import Service.RoomService;
 import Service.SpaTreatment;
@@ -10,16 +11,14 @@ import Staff.Manager;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args)  {
         Hotel hotel = new Hotel("Grand Palace");
 
         // Add Rooms
-        Room r1 = new Room(RoomType.STANDARD, new BigDecimal("50.00"));
-        Room r2 = new Room(RoomType.DELUXE, new BigDecimal("80.00"));
+        Room r1 = new Room(RoomType.STANDARD, new BigDecimal("50.00"),"101");
+        Room r2 = new Room(RoomType.DELUXE, new BigDecimal("80.00"),"102");
         hotel.addRoom(r1);
         hotel.addRoom(r2);
 
@@ -50,7 +49,7 @@ public class Main {
             System.out.println("Error: " + ex.getMessage());
         }
 
-        //will check again, Hotel.java
+        //will check again, core.Hotel.java
         System.out.println("\nAvailable rooms from 2025-07-10 to 2025-07-12:");
         for (Room r : hotel.getAvailableRooms(LocalDate.of(2025, 7, 10), LocalDate.of(2025, 7, 12))) {
             System.out.println(r);
@@ -62,7 +61,7 @@ public class Main {
         hotel.addStaff(new Manager("MG001", "Elena"));
 
         // Services
-        hotel.addService(new RoomService("Room Cleaning", new BigDecimal("10.00"),new BigDecimal("5.00")));
+        hotel.addService(new RoomService("core.Room Cleaning", new BigDecimal("10.00"),new BigDecimal("5.00")));
         hotel.addService(new SpaTreatment("Relaxing Massage", new BigDecimal("30.00"),60));
         hotel.addService(new LaundryService("Clothes Wash", new BigDecimal("15.00"),3));
 
@@ -79,9 +78,9 @@ public class Main {
 
         // Total charges
         System.out.println("Service Charges: " + hotel.calculateTotalServiceCharges());
-        System.out.println("Booking Charges: " + hotel.calculateTotalBookingCharges());
+        System.out.println("core.Booking Charges: " + hotel.calculateTotalBookingCharges());
         BigDecimal total = hotel.calculateTotalServiceCharges().add(hotel.calculateTotalBookingCharges());
-        System.out.println("Total Charges (Booking + Services): " + total);
+        System.out.println("Total Charges (core.Booking + Services): " + total);
 
     }
 }

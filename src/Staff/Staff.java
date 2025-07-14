@@ -29,4 +29,15 @@ public abstract class Staff {
     public String toString() {
         return name + " from " + department + " with ID " + staffID;
     }
+
+    //3. - Homework 3
+    public int getHighestPriorityIndex(int[] tasks) {
+        int minIndex = 0;
+        for (int i = 1; i < tasks.length; i++) {
+            if (tasks[i] < tasks[minIndex])
+                minIndex = i;
+        }
+        return minIndex;
+    }
+
 }

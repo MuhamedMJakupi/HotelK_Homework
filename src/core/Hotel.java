@@ -1,5 +1,6 @@
-import Exceptions.InvalidBookingDatesException;
-import Exceptions.RoomUnavailableException;
+package core;
+
+import Exceptions.*;
 import Interface.Bookable;
 import Interface.Chargeable;
 import Service.HotelService;
@@ -30,6 +31,19 @@ public class Hotel {
         items.add(room);
     }
 
+    // added for duplicate method will check again,no need for now
+    /*
+     public void addRoom(Room room) {
+    try {
+        checkForDuplicateRoom(room);
+        rooms.add(room);
+    } catch (DuplicateRoomException e) {
+        System.out.println("Error: " + e.getMessage());
+    }
+}
+*/
+
+
     public void addService(HotelService service) {
         services.add(service);
         items.add(service);
@@ -51,7 +65,7 @@ public class Hotel {
         for (Booking b : bookings) {
             if (b.getRoom().equals(booking.getRoom()) &&
                     !(booking.getCheckOut().isBefore(b.getCheckIn()) || booking.getCheckIn().isAfter(b.getCheckOut()))) {
-                throw new RoomUnavailableException("Room is not available for selected dates.");
+                throw new RoomUnavailableException("core.Room is not available for selected dates.");
             }
         }
 
@@ -62,7 +76,9 @@ public class Hotel {
         if (booking.getRoom() instanceof Bookable bookableRoom) {
             bookableRoom.markAsBooked();
         }
-        System.out.println("Booking successful: " + booking);
+        booking.getRoom().setCurrentGuest(booking.getGuest());
+
+        System.out.println("core.Booking successful: " + booking);
 
     }
 
@@ -71,7 +87,7 @@ public class Hotel {
         bookings.removeIf(b -> {
             if (b.getBookingID().equals(bookingID)) {
                 b.getRoom().setAvailable(true);
-                System.out.println("Booking canceled: " + bookingID);
+                System.out.println("core.Booking canceled: " + bookingID);
                 return true;
             }
             return false;
@@ -138,9 +154,84 @@ public class Hotel {
     public BigDecimal calculateTotalBookingCharges() {
         BigDecimal total = BigDecimal.ZERO;
         for (Booking b : bookings) {
-            total = total.add(b.getCost()); // This uses Booking’s getCost()
+            total = total.add(b.getCost()); // This uses core.Booking’s getCost()
         }
         return total;
     }
+
+
+
+    //14. -Homework 3
+    public void checkRoomPricing(core.Room[] rooms) {
+        for (core.Room r : rooms) {
+            if (r.getNightlyRate().compareTo(BigDecimal.ZERO) <= 0) {
+                System.out.println("Invalid rate for room: " + r.getRoomNumber());
+            }
+        }
+    }
+
+    //will check again needs getID(), had a getGuestId()
+    //5. -Homework 3
+    public void printUserBookings(core.User user) {
+        for (core.Booking b : bookings) {
+            if (b.getGuest().getGuestID().equals(user.getId())) {
+                System.out.println(b);
+            }
+        }
+    }
+
+    //7. needs method getUser(), added to HotelService
+    //7. - Homework 3
+    public BigDecimal getServiceCostForUser(User user) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (HotelService service : services) {
+            if (service.getUser() != null && service.getUser().getId().equals(user.getId())) {
+                total = total.add(service.getCost());
+            }
+        }
+        return total;
+    }
+
+
+
+    // created new method for roomNumber in Room.java
+    //13. -Homework 3
+    public void checkForDuplicateRoom(Room newRoom) throws DuplicateRoomException {
+        for (Room room : rooms) {
+            if (room.getRoomNumber().equals(newRoom.getRoomNumber())) {
+                throw new DuplicateRoomException("Duplicate Room ID detected: " + newRoom.getRoomNumber());
+            }
+        }
+    }
+
+    //17. -Homework 3
+    public void checkRoomCapacity(Room[] rooms, int maxCapacity) throws RoomCapacityExceededException {
+        for (Room room : rooms) {
+            if (room.getBedCount() > maxCapacity) {
+                throw new RoomCapacityExceededException("Room " + room.getRoomNumber() + " exceeds capacity.");
+            }
+        }
+    }
+
+    //20. -Homework 3
+    public void checkForDuplicateGuestBookings(Room[] rooms) throws DuplicateGuestBookingException {
+        for (int i = 0; i < rooms.length; i++) {
+            Guest guest1 = rooms[i].getCurrentGuest();
+            if (guest1 == null) continue;
+
+            for (int j = i + 1; j < rooms.length; j++) {
+                Guest guest2 = rooms[j].getCurrentGuest();
+                if (guest2 == null) continue;
+
+                if (guest1.getGuestID().equals(guest2.getGuestID())) {
+                    throw new DuplicateGuestBookingException("Duplicate booking found for Guest ID: " + guest1.getGuestID());
+                }
+            }
+        }
+        System.out.println("No duplicate guest bookings found.");
+    }
+
+
+
 
 }

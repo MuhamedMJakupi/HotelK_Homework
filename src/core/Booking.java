@@ -1,11 +1,12 @@
-import Interface.Bookable;
+package core;
+
 import Interface.Chargeable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
-//Booking implements chargeable
+//core.Booking implements chargeable
 public class Booking implements Chargeable {
     private final String bookingID;
     private final Room room;
@@ -38,7 +39,7 @@ public class Booking implements Chargeable {
 
     @Override
     public String toString() {
-        return "Booking{" + bookingID + ", Room: " + room.getRoomID() + ", Guest: " + guest.getFullName()
+        return "core.Booking{" + bookingID + ", core.Room: " + room.getRoomID() + ", core.Guest: " + guest.getFullName()
                 + ", From: " + checkIn + " To: " + checkOut + ", Total: " + calculateTotalCost() + "}";
     }
 

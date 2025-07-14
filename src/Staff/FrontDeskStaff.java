@@ -23,4 +23,17 @@ public class FrontDeskStaff extends Staff {
     public String toString() {
         return "FrontDeskStaff: " + super.toString();
     }
+
+    //9. -Homework 3
+    public void handleComplaints(String[] complaints) {
+        for (String c : complaints) {
+            switch (c.toLowerCase()) {
+                case "wifi" -> System.out.println("Report sent to IT support.");
+                case "cleanliness" -> System.out.println("Notified housekeeping.");
+                case "noise" -> System.out.println("Security has been alerted.");
+                default -> System.out.println("Complaint noted: " + c);
+            }
+        }
+    }
+
 }

@@ -27,4 +27,14 @@ public class LaundryService extends HotelService {
                 " | Items: " + itemCount +
                 " | Final Cost: " + getCost();
     }
+
+    //11. -Homework 3
+    public void checkWeightLimit(double[] weights) {
+        double total = 0;
+        for (double w : weights)
+            total += w;
+        if (total > 20.0)
+            System.out.println("Total weight exceeds 20kg!");
+    }
+
 }

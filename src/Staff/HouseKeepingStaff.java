@@ -15,4 +15,15 @@ public class HouseKeepingStaff extends Staff {
     public String toString() {
         return "HousekeepingStaff: " + super.toString();
     }
+
+    //8. -Homework 3
+    public int countDirtyRooms(char[] status) {
+        int count = 0;
+        for (char c : status) {
+            if (c == 'D')
+                count++;
+        }
+        return count;
+    }
+
 }

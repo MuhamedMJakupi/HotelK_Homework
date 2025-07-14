@@ -1,3 +1,5 @@
+package core;
+
 import java.util.UUID;
 
 public class Guest {
@@ -39,6 +41,6 @@ public class Guest {
 
     @Override
     public String toString() {
-        return "Guest{" + guestID + ", " + getFullName() + ", " + email + "}";
+        return "core.Guest{" + guestID + ", " + getFullName() + ", " + email + "}";
     }
 }

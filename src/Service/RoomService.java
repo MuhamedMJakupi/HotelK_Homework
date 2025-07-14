@@ -20,4 +20,14 @@ public class RoomService extends HotelService {
                 " | Service Fee: " + serviceFee +
                 " | Final Cost: " + getCost();
     }
+
+    //12. -Homework 3
+    public void completeSteps(char[] steps) {
+        int i = 0;
+        while (i < steps.length) {
+            steps[i] = 'X';
+            i++;
+        }
+    }
+
 }
