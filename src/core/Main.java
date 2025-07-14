@@ -1,16 +1,20 @@
 package core;
 
+import Exceptions.DuplicateRoomException;
 import Exceptions.InvalidBookingDatesException;
 import Exceptions.RoomUnavailableException;
+import Service.HotelService;
 import Service.LaundryService;
 import Service.RoomService;
 import Service.SpaTreatment;
 import Staff.FrontDeskStaff;
 import Staff.HouseKeepingStaff;
 import Staff.Manager;
+import Staff.Staff;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args)  {
@@ -81,6 +85,66 @@ public class Main {
         System.out.println("core.Booking Charges: " + hotel.calculateTotalBookingCharges());
         BigDecimal total = hotel.calculateTotalServiceCharges().add(hotel.calculateTotalBookingCharges());
         System.out.println("Total Charges (core.Booking + Services): " + total);
+
+        System.out.println("HW3 - testing");
+        //1.
+        boolean[] occupancy = {false, false, false, true, false, false, false};
+        System.out.println("Room vacant 3+ consecutive days? " + r1.wasVacantForThreeDays(occupancy));
+
+        //2.
+        User user = new User("John", "Doe", "Manager");
+        char[] template = {'H', 'e', 'l', 'l', 'o', ' ', '*', '!'};
+        System.out.println(user.buildGreeting(template));
+
+        //3.
+        Staff staff = new Manager("MG001", "Elena");
+        int[] priorities = {5, 3, 9, 1, 7};
+        System.out.println("Highest priority task index: " + staff.getHighestPriorityIndex(priorities));
+
+        //4.
+        StandardRoom stdRoom = new StandardRoom(RoomType.STANDARD, new BigDecimal("100"),"201");
+        stdRoom.applyDiscounts(new char[]{'A', 'B', 'X'}); // Includes an invalid code to test default
+        System.out.println("Discounted rate: " + stdRoom.getNightlyRate());
+
+
+        //9.
+        FrontDeskStaff frontDesk = new FrontDeskStaff("FD001", "Anna");
+        String[] complaints = {"wifi", "noise", "cleanliness", "other"};
+        frontDesk.handleComplaints(complaints);
+
+        //10.
+        DeluxeRoom deluxe = new DeluxeRoom(new BigDecimal("150"), 3,"202");
+        int[] occupancyPerNight = {2, 3, 4};
+        System.out.println("Occupancy violation? " + deluxe.checkOccupancyViolation(occupancyPerNight));
+
+        //11.
+        LaundryService laundry = new LaundryService("Wash", new BigDecimal("20"), 2);
+        double[] weights = {5.5, 8.0, 7.0};
+        laundry.checkWeightLimit(weights);
+
+        //12.
+        RoomService roomService = new RoomService("Cleaning", new BigDecimal("15"), new BigDecimal("5"));
+        char[] steps = {'-', 'P', 'C'};
+        roomService.completeSteps(steps);
+        System.out.println("Steps after completion: " + Arrays.toString(steps));
+
+        //19.
+        double[] costs = {100.0, 200.0, 300.0};
+        char[] tiers = {'A', 'B', 'Z'};
+        HotelService.applyTierDiscounts(costs, tiers);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
 }
