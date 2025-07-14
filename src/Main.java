@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws InvalidBookingDatesException, RoomUnavailableException {
+    public static void main(String[] args)  {
         Hotel hotel = new Hotel("Grand Palace");
 
         // Add Rooms
