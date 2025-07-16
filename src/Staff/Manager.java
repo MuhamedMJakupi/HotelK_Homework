@@ -7,6 +7,7 @@ import core.Guest;
 import core.Room;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class Manager extends Staff {
 
@@ -58,6 +59,17 @@ public class Manager extends Staff {
                 throw new InvalidBookingDatesException("Invalid at index " + i);
         }
     }
+
+    //Bonus : 1. -Homework 4
+    public static Room getEarliestUnbookedRoom(LocalDate startDate, List<Room> rooms) {
+        for (Room room : rooms) {
+            if (room.isAvailable(startDate, startDate.plusDays(1))) {
+                return room;
+            }
+        }
+        return null;
+    }
+
 
 
 

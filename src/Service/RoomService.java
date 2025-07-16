@@ -4,14 +4,17 @@ import java.math.BigDecimal;
 
 public class RoomService extends HotelService {
     private final BigDecimal serviceFee;
-    public RoomService(String description, BigDecimal baseCost, BigDecimal serviceFee) {
-        super(description, baseCost);
+    public RoomService(String description, BigDecimal baseCost, BigDecimal serviceFee,String serviceName) {
+        super(description, baseCost,serviceName);
         this.serviceFee = serviceFee;
     }
 
     @Override
     public BigDecimal getCost() {
-        return getBaseCost().add(serviceFee); // flat fee for service
+        if (super.getCost() != null && super.getCost().compareTo(getBaseCost()) != 0) {
+            return super.getCost();
+        }
+        return getBaseCost().add(serviceFee);
     }
 
     @Override

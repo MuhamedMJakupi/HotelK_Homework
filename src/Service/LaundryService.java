@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 public class LaundryService extends HotelService {
     private final int itemCount;
 
-    public LaundryService(String description, BigDecimal baseCost, int itemCount) {
-        super(description, baseCost);
+    public LaundryService(String description, BigDecimal baseCost, int itemCount,String serviceName) {
+        super(description, baseCost,serviceName);
         this.itemCount=itemCount;
     }
 
@@ -17,6 +17,14 @@ public class LaundryService extends HotelService {
         //return getBaseCost().add(new BigDecimal("5.00"));
 
         // base cost + 2 per item
+        //return getBaseCost().add(BigDecimal.valueOf(itemCount * 2));
+
+        BigDecimal discounted = super.getCost();
+        // If a discounted cost was set and it's not equal to baseCost, use it
+        if (discounted != null && discounted.compareTo(getBaseCost()) != 0) {
+            return discounted;
+        }
+        // Otherwise use the original calculation
         return getBaseCost().add(BigDecimal.valueOf(itemCount * 2));
 
     }

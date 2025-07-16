@@ -5,6 +5,10 @@ public abstract class Staff {
     private final String name;
     private final String department;
 
+    // Part 3 : 4.1 -Homework 4
+    protected int tasksCompleted = 0;
+
+
     public Staff(String staffID, String name, String department) {
         this.staffID = staffID;
         this.name = name;
@@ -38,6 +42,15 @@ public abstract class Staff {
                 minIndex = i;
         }
         return minIndex;
+    }
+
+    // Part 3: 4.2 -Homework 4
+    public void completeTask() {
+        tasksCompleted++;
+    }
+
+    public int getTasksCompleted() {
+        return tasksCompleted;
     }
 
 }

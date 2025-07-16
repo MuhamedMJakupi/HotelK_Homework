@@ -6,15 +6,17 @@ public class SpaTreatment extends HotelService {
 
     private final int durationMinutes;
 
-    public SpaTreatment(String description, BigDecimal baseCost, int durationMinutes) {
-        super(description, baseCost);
+    public SpaTreatment(String description, BigDecimal baseCost, int durationMinutes,String serviceName) {
+        super(description, baseCost,serviceName);
         this.durationMinutes = durationMinutes;
     }
 
     @Override
     public BigDecimal getCost() {
-        return getBaseCost().add(BigDecimal.valueOf(durationMinutes*0.5
-        )); // 20% fee
+        if (super.getCost() != null && super.getCost().compareTo(getBaseCost()) != 0) {
+            return super.getCost();
+        }
+        return getBaseCost().add(BigDecimal.valueOf(durationMinutes * 0.5));
     }
 
     @Override

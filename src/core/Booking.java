@@ -39,7 +39,7 @@ public class Booking implements Chargeable {
 
     @Override
     public String toString() {
-        return "core.Booking{" + bookingID + ", core.Room: " + room.getRoomID() + ", core.Guest: " + guest.getFullName()
+        return "Booking{" + bookingID + ", Room: " + room.getRoomID() + ", Guest: " + guest.getFullName()
                 + ", From: " + checkIn + " To: " + checkOut + ", Total: " + calculateTotalCost() + "}";
     }
 

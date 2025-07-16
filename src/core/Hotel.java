@@ -8,19 +8,25 @@ import Staff.Staff;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 public class Hotel {
     private final String name;
+    // Part1: 1.1 -Homework 4
     private final List<Room> rooms = new ArrayList<>();
     private final List<Booking> bookings = new ArrayList<>();
     private final List<HotelService> services = new ArrayList<>();
     private final List<Staff> staffMembers = new ArrayList<>();
     private final List<Chargeable> items = new ArrayList<>();
+    // Part1 : 2.1 -Homework 4
+    private Set<Guest> registeredGuests = new HashSet<>();
+    // Part1 : 3.1 - Homework 4
+    private Map<String, Booking> bookingsById = new HashMap<>();
 
-
+    public List<HotelService> getServices() {
+        return services;
+    }
 
     public Hotel(String name) {
         this.name = name;
@@ -55,6 +61,7 @@ public class Hotel {
 
 
     // including exceptions both
+    //Bonus : 3. -Homework 4
     public void makeBooking(Booking booking) throws RoomUnavailableException, InvalidBookingDatesException {
         // Validate dates
         if (!booking.getCheckOut().isAfter(booking.getCheckIn())) {
@@ -65,7 +72,7 @@ public class Hotel {
         for (Booking b : bookings) {
             if (b.getRoom().equals(booking.getRoom()) &&
                     !(booking.getCheckOut().isBefore(b.getCheckIn()) || booking.getCheckIn().isAfter(b.getCheckOut()))) {
-                throw new RoomUnavailableException("core.Room is not available for selected dates.");
+                throw new RoomUnavailableException("Room is not available for selected dates.");
             }
         }
 
@@ -80,14 +87,28 @@ public class Hotel {
 
         System.out.println("core.Booking successful: " + booking);
 
+        //Part 1 : 3.2 -Homework 4
+        bookingsById.put(booking.getBookingID(), booking);
+
     }
+
+    //Part 1 : 3.3 -Homework 4
+    public Booking getBookingById(String bookingId) {
+        Booking booking = bookingsById.get(bookingId);
+        if (booking == null) {
+            System.out.println("No booking found with ID: " + bookingId);
+        }
+        return booking;
+    }
+
+
 
 
     public void cancelBooking(String bookingID) {
         bookings.removeIf(b -> {
             if (b.getBookingID().equals(bookingID)) {
                 b.getRoom().setAvailable(true);
-                System.out.println("core.Booking canceled: " + bookingID);
+                System.out.println("Booking canceled: " + bookingID);
                 return true;
             }
             return false;
@@ -109,7 +130,7 @@ public class Hotel {
     }
 
 
-    // will check again later
+    // Part 2: 4. -Homework 4
     public List<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
         List<Room> available = new ArrayList<>();
         for (Room room : rooms) {
@@ -127,6 +148,41 @@ public class Hotel {
         }
         return available;
     }
+
+    // Part1: 1.2 -Homework 4
+    public List<Room> getAllAvailableRooms() {
+        List<Room> available = new ArrayList<>();
+        for (Room r : rooms) {
+            if (r.isAvailable()) {
+                available.add(r);
+            }
+        }
+        return available;
+    }
+    // Part1 : 1.3 -Homework 4
+    public List<Room> getRoomsByType(String roomType) {
+        List<Room> matching = new ArrayList<>();
+        for (Room r : rooms) {
+            if (r.getType().name().equalsIgnoreCase(roomType)) {
+                matching.add(r);
+            }
+        }
+        return matching;
+    }
+
+    // Part1 : 2.2 -Homework 4
+    public void registerGuest(Guest guest) {
+        if (registeredGuests.add(guest)) {
+            System.out.println("Registered new guest: " + guest.getFullName());
+        } else {
+            System.out.println("Guest already registered: " + guest.getFullName());
+        }
+    }
+    // Part1 : 2.3 -Homework 4
+    public int getTotalNumberOfGuests() {
+        return registeredGuests.size();
+    }
+
 
     public void showServices() {
         System.out.println("Services:");
@@ -160,7 +216,6 @@ public class Hotel {
     }
 
 
-
     //14. -Homework 3
     public void checkRoomPricing(core.Room[] rooms) {
         for (core.Room r : rooms) {
@@ -191,7 +246,6 @@ public class Hotel {
         }
         return total;
     }
-
 
 
     // created new method for roomNumber in Room.java
@@ -231,7 +285,98 @@ public class Hotel {
         System.out.println("No duplicate guest bookings found.");
     }
 
+    // Part 2: 1. -Homework 4
+    public List<Room> getRooms() {
+        return rooms;
+    }
 
+    // Part 2: 2. -Homework 4
+    public List<String> getAllGuestNames() {
+        List<String> names = new ArrayList<>();
+        for (Guest guest : registeredGuests) {
+            names.add(guest.getFullName());
+        }
+        return names;
+    }
+
+    // Part 2: 3. -Homework 4
+    public double calculateTotalRevenue() {
+        double total = 0.0;
+        for (Booking booking : bookings) {
+            total += booking.getCost().doubleValue();
+        }
+        return total;
+    }
+
+    // Part 2: 5. -Homework 4
+    public Map<Guest, List<Booking>> getBookingsByGuest() {
+        Map<Guest, List<Booking>> map = new HashMap<>();
+        for (Booking booking : bookings) {
+            Guest guest = booking.getGuest();
+            map.putIfAbsent(guest, new ArrayList<>());
+            map.get(guest).add(booking);
+        }
+        return map;
+    }
+
+    // Part 3: 1. -Homework 4
+    public String getMostFrequentRoomTypeBooked() {
+        Map<String, Integer> typeCount = new HashMap<>();
+        for (Booking booking : bookings) {
+            String type = booking.getRoom().getType().toString();
+            typeCount.put(type, typeCount.getOrDefault(type, 0) + 1);
+        }
+
+        String mostFrequent = null;
+        int maxCount = 0;
+        for (Map.Entry<String, Integer> entry : typeCount.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                maxCount = entry.getValue();
+                mostFrequent = entry.getKey();
+            }
+        }
+        return mostFrequent;
+    }
+
+    // Part 3: 2. -Homework 4
+    public Set<Guest> getGuestsWithMultipleBookings() {
+        Set<Guest> result = new HashSet<>();
+        Map<Guest, List<Booking>> map = getBookingsByGuest();
+
+        for (Map.Entry<Guest, List<Booking>> entry : map.entrySet()) {
+            if (entry.getValue().size() > 1) {
+                result.add(entry.getKey());
+            }
+        }
+        return result;
+    }
+
+    // Part 3 : 4.3 -Homework 4
+    public Map<Staff, Integer> getStaffTaskCounts() {
+        Map<Staff, Integer> taskMap = new HashMap<>();
+        for (Staff s : staffMembers) {
+            taskMap.put(s, s.getTasksCompleted());
+        }
+        return taskMap;
+    }
+
+    //Bonus : 2. -Homework 4
+    public List<Room> getRoomsWithNoBookings() {
+        List<Room> unbooked = new ArrayList<>();
+        for (Room room : rooms) {
+            boolean booked = false;
+            for (Booking booking : bookings) {
+                if (booking.getRoom().equals(room)) {
+                    booked = true;
+                    break;
+                }
+            }
+            if (!booked) {
+                unbooked.add(room);
+            }
+        }
+        return unbooked;
+    }
 
 
 }

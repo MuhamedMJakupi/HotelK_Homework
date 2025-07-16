@@ -15,6 +15,10 @@ import Staff.Staff;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.Map;
+
 
 public class Main {
     public static void main(String[] args)  {
@@ -30,19 +34,22 @@ public class Main {
         Guest g1 = new Guest( "Alice", "Brown", "alice@example.com");
         Guest g2 = new Guest( "Bob", "Smith", "bob@example.com");
 
+        Booking b1 = null;
+        Booking b2 = null;
+        Booking b3 = null;
         try {
             // Make Bookings
-            Booking b1 = new Booking(r1, g1, LocalDate.of(2025, 7, 10), LocalDate.of(2025, 7, 12));
+             b1 = new Booking(r1, g1, LocalDate.of(2025, 7, 10), LocalDate.of(2025, 7, 12));
             hotel.makeBooking(b1);
             System.out.println();
 
             // Attempt overlapping booking (should fail)
-            Booking b2 = new Booking(r1, g2, LocalDate.of(2025, 7, 11), LocalDate.of(2025, 7, 13));
+             b2 = new Booking(r1, g2, LocalDate.of(2025, 7, 11), LocalDate.of(2025, 7, 13));
             hotel.makeBooking(b2);
             System.out.println();
 
             // Valid booking
-            Booking b3 = new Booking(r2, g2, LocalDate.of(2025, 7, 11), LocalDate.of(2025, 7, 13));
+             b3 = new Booking(r2, g2, LocalDate.of(2025, 7, 11), LocalDate.of(2025, 7, 13));
             hotel.makeBooking(b3);
             System.out.println();
 
@@ -65,9 +72,9 @@ public class Main {
         hotel.addStaff(new Manager("MG001", "Elena"));
 
         // Services
-        hotel.addService(new RoomService("core.Room Cleaning", new BigDecimal("10.00"),new BigDecimal("5.00")));
-        hotel.addService(new SpaTreatment("Relaxing Massage", new BigDecimal("30.00"),60));
-        hotel.addService(new LaundryService("Clothes Wash", new BigDecimal("15.00"),3));
+        hotel.addService(new RoomService("Room Cleaning", new BigDecimal("10.00"),new BigDecimal("5.00"),"Room Service"));
+        hotel.addService(new SpaTreatment("Relaxing Massage", new BigDecimal("30.00"),60,"SpaTreatment"));
+        hotel.addService(new LaundryService("Clothes Wash", new BigDecimal("15.00"),3,"Laundry Service"));
 
         // Display
         System.out.println();
@@ -118,12 +125,13 @@ public class Main {
         System.out.println("Occupancy violation? " + deluxe.checkOccupancyViolation(occupancyPerNight));
 
         //11.
-        LaundryService laundry = new LaundryService("Wash", new BigDecimal("20"), 2);
+        LaundryService laundry = new LaundryService("Wash", new BigDecimal("20"), 2,"Laundry Service");
         double[] weights = {5.5, 8.0, 7.0};
         laundry.checkWeightLimit(weights);
 
         //12.
-        RoomService roomService = new RoomService("Cleaning", new BigDecimal("15"), new BigDecimal("5"));
+        RoomService roomService = new RoomService("Cleaning", new BigDecimal("15"), new BigDecimal("5"),
+                "Room Service");
         char[] steps = {'-', 'P', 'C'};
         roomService.completeSteps(steps);
         System.out.println("Steps after completion: " + Arrays.toString(steps));
@@ -134,16 +142,130 @@ public class Main {
         HotelService.applyTierDiscounts(costs, tiers);
 
 
+        System.out.println();
+        System.out.println("HW4 - testing : ");
+
+        //1.1
+        System.out.println("All available rooms:");
+        for (Room r : hotel.getAllAvailableRooms()) {
+            System.out.println(r);
+        }
+
+        System.out.println("DELUXE rooms:");
+        for (Room r : hotel.getRoomsByType("DELUXE")) {
+            System.out.println(r);
+        }
+
+        //1.2
+        hotel.registerGuest(g1);
+        hotel.registerGuest(g2);
+        hotel.registerGuest(g1); // duplicate test
+
+        System.out.println("Total unique guests: " + hotel.getTotalNumberOfGuests());
+
+        //1.3
+        System.out.println("\n--- Booking Lookup ---");
+        String lookupId = b1.getBookingID(); // or any known ID
+        Booking foundBooking = hotel.getBookingById(lookupId);
+        if (foundBooking != null) {
+            System.out.println("Found Booking: " + foundBooking);
+        }
 
 
+        //2.1
+        System.out.println("\n--- Rooms Above Rate 60.00 ---");
+        List<Room> expensiveRooms = Room.getRoomsAboveRate(hotel.getRooms(), 60.00);
+        for (Room r : expensiveRooms) {
+            System.out.println(r);
+        }
+
+        // Apply dynamic discount
+        HotelService service = hotel.getServices().get(1); // assuming for service 2 (relaxing massage,30 - baseCost)
+        service.addDiscountCode("SUMMER20", 0.20);
+        System.out.println("Original cost: " + service.getBaseCost());
+        service.applyDiscount("SUMMER20");
 
 
+        // Find earliest available room
+        Room earliest = Manager.getEarliestUnbookedRoom(LocalDate.of(2025, 7, 16), hotel.getRooms());
+        System.out.println("Earliest available room: " + (earliest != null ? earliest : "None"));
+
+        // Get rooms with no bookings
+        List<Room> unbookedRooms = hotel.getRoomsWithNoBookings();
+        System.out.println("Rooms with no bookings: " + unbookedRooms);
 
 
+        // Part 4
+        // Print all available rooms
+        System.out.println("Available Rooms:");
+        List<Room> availableRooms = hotel.getAllAvailableRooms();
+        availableRooms.forEach(System.out::println);
+
+        // Print rooms of a specific type
+        System.out.println("\nDELUXE Rooms:");
+        List<Room> deluxeRooms = hotel.getRoomsByType("DELUXE");
+        deluxeRooms.forEach(System.out::println);
+
+        // Retrieve and print a booking by its ID
+        System.out.println("\nBooking by ID:");
+        Booking retrievedBooking = hotel.getBookingById(b1.getBookingID());
+        System.out.println(retrievedBooking);
+
+        // Print all guest names
+        System.out.println("\nAll Guest Names:");
+        List<String> guestNames = hotel.getAllGuestNames();
+        guestNames.forEach(System.out::println);
+
+        // Calculate and print total revenue
+        System.out.println("\nTotal Revenue from Bookings:");
+        System.out.println(hotel.calculateTotalRevenue());
 
 
+        //
+        // Most frequently booked room type
+        System.out.println("\nMost Frequently Booked Room Type:");
+        String mostFrequentType = hotel.getMostFrequentRoomTypeBooked();
+        System.out.println(mostFrequentType);
+
+        // Guests with multiple bookings
+        System.out.println("\nGuests with Multiple Bookings:");
+        Set<Guest> frequentGuests = hotel.getGuestsWithMultipleBookings();
+        frequentGuests.forEach(g -> System.out.println(g.getFullName()));
 
 
+        //
+        // Room occupancy simulation (if using Map<LocalDate, Boolean>)
+        System.out.println("\nRoom Occupancy Check:");
+        Room sampleRoom = hotel.getRooms().get(0);
+        boolean available = sampleRoom.isAvailable(LocalDate.of(2025, 7, 10), LocalDate.of(2025, 7, 12));
+        System.out.println("Is Room " + sampleRoom.getRoomID() + " available from 2025-07-10 to 2025-07-12? " + available);
+
+        // Apply dynamic pricing (if using Map<String, Double> for discounts)
+        System.out.println("\nApplying Discount to Service:");
+        HotelService spa = hotel.getServices().stream()
+                .filter(s -> s.getServiceName() != null && s.getServiceName().equalsIgnoreCase("Relaxing Massage"))
+                .findFirst()
+                .orElse(null);
+
+
+        //spa.addDiscountCode("SUMMER20", 0.20);
+        if (spa != null) {
+            spa.applyDiscount("SUMMER20");  // Assuming "SUMMER20" exists
+            System.out.println("New cost for Relaxing Massage: " + spa.getCost());
+        }
+
+        // Show staff task tracking
+        System.out.println("\nStaff Task Counts:");
+        Map<Staff, Integer> taskCounts = hotel.getStaffTaskCounts();
+        for (Map.Entry<Staff, Integer> entry : taskCounts.entrySet()) {
+            System.out.println(entry.getKey().getName() + " completed " + entry.getValue() + " tasks.");
+        }
+
+
+//        System.out.println("--Debug: Available services--");
+//        for (HotelService s : hotel.getServices()) {
+//            System.out.println("Service: " + s.getServiceName() + ", Base Cost: " + s.getBaseCost());
+//        }
 
 
     }

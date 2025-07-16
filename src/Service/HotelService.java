@@ -4,26 +4,33 @@ import Interface.Chargeable;
 import core.User;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public abstract class HotelService implements Chargeable {
     private final String serviceID;
     private final String description;
-    private final BigDecimal baseCost;
+    private  BigDecimal baseCost;
+    private BigDecimal cost; //for after discount
     private User user;
+    private String  serviceName;
+
+    // Part 3: 5.2 -Homework 4
+    private Map<String, Double> discountCodes = new HashMap<>();
 
 
-
-    public HotelService(String description, BigDecimal baseCost) {
+    public HotelService(String description, BigDecimal baseCost,String serviceName) {
         this.serviceID = UUID.randomUUID().toString();
         this.description = description;
         this.baseCost = baseCost;
+        this.serviceName = serviceName;
+        discountCodes = new HashMap<>();
     }
 
     public User getUser() {
         return user;
     }
-
 
     public String getServiceID() {
         return serviceID;
@@ -37,7 +44,26 @@ public abstract class HotelService implements Chargeable {
         return baseCost;
     }
 
-    public abstract BigDecimal getCost();
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setBaseCost(BigDecimal baseCost) {
+        this.baseCost = baseCost;
+    }
+
+
+    //public abstract BigDecimal getCost();
+
+
+    @Override
+    public BigDecimal getCost() {
+        return cost != null ? cost : baseCost;
+    }
+
+    public void setCost(BigDecimal cost) {
+        this.cost = cost;
+    }
 
     @Override
     public String toString() {
@@ -75,6 +101,25 @@ public abstract class HotelService implements Chargeable {
             }
             double finalCost = costs[i] * discount;
             System.out.println("Original: " + costs[i] + ", Final: " + finalCost);
+        }
+    }
+
+
+    // Method to add discount codes
+    public void addDiscountCode(String code, Double discount) {
+        discountCodes.put(code, discount);
+    }
+
+    // Apply discount by code
+    // Part 3: 5.3 -Homework 4
+    public void applyDiscount(String discountCode) {
+        Double discount = discountCodes.get(discountCode);
+        if (discount != null) {
+            BigDecimal newCost = baseCost.multiply(BigDecimal.valueOf(1 - discount));
+            setCost(newCost);
+            System.out.println("Discount applied: " + discountCode + " | New cost: " + newCost);
+        } else {
+            System.out.println("Invalid discount code: " + discountCode);
         }
     }
 

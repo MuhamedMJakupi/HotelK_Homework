@@ -5,7 +5,7 @@ import Interface.Chargeable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
+import java.util.*;
 
 public class Room implements Bookable, Chargeable {
     private final String roomID;
@@ -15,7 +15,8 @@ public class Room implements Bookable, Chargeable {
     private Guest currentGuest;
     private String roomNumber;
 
-
+    // Part 3: - 3.1 - Homework 4
+    private final Map<LocalDate, Boolean> occupancyMap = new HashMap<>();
 
     public Room(RoomType type, BigDecimal nightlyRate,String roomNumber) {
         this.roomID = UUID.randomUUID().toString(); // auto-generate
@@ -78,10 +79,33 @@ public class Room implements Bookable, Chargeable {
     }
 
 
+    // Part 3: 3.2 -Homework 4
     @Override
     public boolean isAvailable(LocalDate checkIn, LocalDate checkOut) {
-        return isAvailable;
+        for (LocalDate date = checkIn; !date.isAfter(checkOut); date = date.plusDays(1)) {
+            if (occupancyMap.getOrDefault(date, false)) {
+                return false;
+            }
+        }
+        return true;
     }
+
+    // Part 3: 3.3 -Homework 4
+    public void markAsBooked(LocalDate checkIn, LocalDate checkOut) {
+        for (LocalDate date = checkIn; !date.isAfter(checkOut); date = date.plusDays(1)) {
+            occupancyMap.put(date, true);
+        }
+        this.isAvailable = false;
+    }
+    public void unmarkAsBooked(LocalDate checkIn, LocalDate checkOut) {
+        for (LocalDate date = checkIn; !date.isAfter(checkOut); date = date.plusDays(1)) {
+            occupancyMap.remove(date);
+        }
+        this.isAvailable = true;
+    }
+
+
+
 
     @Override
     public void markAsBooked() {
@@ -121,6 +145,19 @@ public class Room implements Bookable, Chargeable {
     public int getBedCount() {
         return 0; // Default - subclasses can override
     }
+
+
+    // Part 2: 1. -Homework 4
+    public static List<Room> getRoomsAboveRate(List<Room> rooms, double minRate) {
+        List<Room> result = new ArrayList<>();
+        for (Room room : rooms) {
+            if (room.getNightlyRate().doubleValue() > minRate) {
+                result.add(room);
+            }
+        }
+        return result;
+    }
+
 
 
 
