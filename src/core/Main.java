@@ -27,12 +27,16 @@ public class Main {
         // Add Rooms
         Room r1 = new Room(RoomType.STANDARD, new BigDecimal("50.00"),"101");
         Room r2 = new Room(RoomType.DELUXE, new BigDecimal("80.00"),"102");
+        Room r3 = new Room(RoomType.SUITE, new BigDecimal("200.0"), "103");
         hotel.addRoom(r1);
         hotel.addRoom(r2);
+        hotel.addRoom(r3);
 
         // Register Guests
         Guest g1 = new Guest( "Alice", "Brown", "alice@example.com");
         Guest g2 = new Guest( "Bob", "Smith", "bob@example.com");
+        Guest g3 = new Guest("John","Doe","joh@example.com");
+        //registered down at 163.
 
         Booking b1 = null;
         Booking b2 = null;
@@ -44,7 +48,7 @@ public class Main {
             System.out.println();
 
             // Attempt overlapping booking (should fail)
-             b2 = new Booking(r1, g2, LocalDate.of(2025, 7, 11), LocalDate.of(2025, 7, 13));
+            b2 = new Booking(r1, g2, LocalDate.of(2025, 7, 11), LocalDate.of(2025, 7, 13));
             hotel.makeBooking(b2);
             System.out.println();
 
@@ -99,7 +103,7 @@ public class Main {
         System.out.println("Room vacant 3+ consecutive days? " + r1.wasVacantForThreeDays(occupancy));
 
         //2.
-        User user = new User("John", "Doe", "Manager");
+        User user = new User("John Doe", "Manager");
         char[] template = {'H', 'e', 'l', 'l', 'o', ' ', '*', '!'};
         System.out.println(user.buildGreeting(template));
 
@@ -159,6 +163,7 @@ public class Main {
         //1.2
         hotel.registerGuest(g1);
         hotel.registerGuest(g2);
+        hotel.registerGuest(g3);
         hotel.registerGuest(g1); // duplicate test
 
         System.out.println("Total unique guests: " + hotel.getTotalNumberOfGuests());
@@ -267,7 +272,51 @@ public class Main {
 //            System.out.println("Service: " + s.getServiceName() + ", Base Cost: " + s.getBaseCost());
 //        }
 
+        //Homework 5
+        System.out.println();
+        System.out.println("Testing HW-5");
+
+        System.out.println("\nAvailable Rooms:");
+        hotel.getAllAvailableRooms().forEach(System.out::println);
+
+        System.out.println("\nRooms above 60 rate:");
+        hotel.getRoomsAboveRate(60.0).forEach(System.out::println);
+
+        System.out.println("\nAll guest names:");
+        hotel.getAllGuestNames().forEach(System.out::println);
+
+        System.out.println("\nTotal booking revenue:");
+        System.out.println(hotel.calculateTotalRevenue());
+
+        System.out.println("\nMost booked room type:");
+        System.out.println(hotel.getMostFrequentRoomTypeBooked());
+
+        System.out.println("\nGuests with multiple bookings:");
+        hotel.getGuestsWithMultipleBookings().forEach(System.out::println);
+
+        System.out.println("\nStaff Task Counts:");
+        hotel.getStaffTaskCounts().forEach((staf, count) ->
+                System.out.println(staf.getName() + " - " + count + " tasks"));
+
+        System.out.println("\nBookings by Guest:");
+        hotel.getBookingsByGuest().forEach((guest, bookings) -> {
+            System.out.println(guest.getFullName() + ":");
+            bookings.forEach(System.out::println);
+        });
+
+        System.out.println("\nIs any room available?");
+        System.out.println(hotel.isAnyRoomAvailable());
+
+        System.out.println("=== Revenue by Room Type ===");
+        hotel.getRevenueByRoomType().forEach((roomType, revenue) ->
+                System.out.println(roomType + ": $" + revenue));
+
+        System.out.println("=== Partially Booked Rooms (less than 3 nights) ===");
+        List<Room> partials = hotel.getPartiallyBookedRooms(3);
+        partials.forEach(room -> System.out.println(room));
 
     }
+
 }
+
 

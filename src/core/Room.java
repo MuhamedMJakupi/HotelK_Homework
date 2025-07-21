@@ -27,7 +27,7 @@ public class Room implements Bookable, Chargeable {
     }
 
     public Room() {
-        this(RoomType.STANDARD, new BigDecimal("40.00"),"000");
+        this(RoomType.STANDARD, new BigDecimal("50.00"),"000");
     }
 
 

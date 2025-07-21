@@ -8,7 +8,9 @@ import Staff.Staff;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Hotel {
@@ -32,22 +34,24 @@ public class Hotel {
         this.name = name;
     }
 
-    public void addRoom(Room room) {
-        rooms.add(room);
-        items.add(room);
-    }
+    // changed to other one, will check again
+//    public void addRoom(Room room) {
+//        rooms.add(room);
+//        items.add(room);
+//    }
 
     // added for duplicate method will check again,no need for now
-    /*
+
      public void addRoom(Room room) {
     try {
         checkForDuplicateRoom(room);
         rooms.add(room);
+        items.add(room);
     } catch (DuplicateRoomException e) {
         System.out.println("Error: " + e.getMessage());
     }
 }
-*/
+
 
 
     public void addService(HotelService service) {
@@ -131,34 +135,52 @@ public class Hotel {
 
 
     // Part 2: 4. -Homework 4
+//    public List<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
+//        List<Room> available = new ArrayList<>();
+//        for (Room room : rooms) {
+//            boolean isFree = true;
+//            for (Booking booking : bookings) {
+//                if (booking.getRoom().equals(room) &&
+//                        !(checkOut.isBefore(booking.getCheckIn()) || checkIn.isAfter(booking.getCheckOut()))) {
+//                    isFree = false;
+//                    break;
+//                }
+//            }
+//            if (isFree) {
+//                available.add(room);
+//            }
+//        }
+//        return available;
+//    }
+
+    // Part 3: 3. -Homework 5
     public List<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
-        List<Room> available = new ArrayList<>();
-        for (Room room : rooms) {
-            boolean isFree = true;
-            for (Booking booking : bookings) {
-                if (booking.getRoom().equals(room) &&
-                        !(checkOut.isBefore(booking.getCheckIn()) || checkIn.isAfter(booking.getCheckOut()))) {
-                    isFree = false;
-                    break;
-                }
-            }
-            if (isFree) {
-                available.add(room);
-            }
-        }
-        return available;
+        return rooms.stream()
+                .filter(room -> room.isAvailable(checkIn, checkOut))
+                .toList();
     }
 
+
+
     // Part1: 1.2 -Homework 4
+//    public List<Room> getAllAvailableRooms() {
+//        List<Room> available = new ArrayList<>();
+//        for (Room r : rooms) {
+//            if (r.isAvailable()) {
+//                available.add(r);
+//            }
+//        }
+//        return available;
+//    }
+
+    // Part1 : 1. -Homework 5
     public List<Room> getAllAvailableRooms() {
-        List<Room> available = new ArrayList<>();
-        for (Room r : rooms) {
-            if (r.isAvailable()) {
-                available.add(r);
-            }
-        }
-        return available;
+        return rooms.stream()
+                .filter(Room::isAvailable)
+                .toList();
     }
+
+
     // Part1 : 1.3 -Homework 4
     public List<Room> getRoomsByType(String roomType) {
         List<Room> matching = new ArrayList<>();
@@ -291,74 +313,130 @@ public class Hotel {
     }
 
     // Part 2: 2. -Homework 4
+//    public List<String> getAllGuestNames() {
+//        List<String> names = new ArrayList<>();
+//        for (Guest guest : registeredGuests) {
+//            names.add(guest.getFullName());
+//        }
+//        return names;
+//    }
+
+    // Part 1: 3. -Homework 5
     public List<String> getAllGuestNames() {
-        List<String> names = new ArrayList<>();
-        for (Guest guest : registeredGuests) {
-            names.add(guest.getFullName());
-        }
-        return names;
+        return registeredGuests.stream()
+                .map(Guest::getFullName)
+                .toList();
     }
+
 
     // Part 2: 3. -Homework 4
+//    public double calculateTotalRevenue() {
+//        double total = 0.0;
+//        for (Booking booking : bookings) {
+//            total += booking.getCost().doubleValue();
+//        }
+//        return total;
+//    }
+
+    // Part 2: 1. -Homework 5
     public double calculateTotalRevenue() {
-        double total = 0.0;
-        for (Booking booking : bookings) {
-            total += booking.getCost().doubleValue();
-        }
-        return total;
+        return bookings.stream()
+                .map(Booking::getCost)
+                .mapToDouble(BigDecimal::doubleValue)
+                .sum();
     }
+
+
 
     // Part 2: 5. -Homework 4
+//    public Map<Guest, List<Booking>> getBookingsByGuest() {
+//        Map<Guest, List<Booking>> map = new HashMap<>();
+//        for (Booking booking : bookings) {
+//            Guest guest = booking.getGuest();
+//            map.putIfAbsent(guest, new ArrayList<>());
+//            map.get(guest).add(booking);
+//        }
+//        return map;
+//    }
+
+    // Part 2: 4. -Homework 5
     public Map<Guest, List<Booking>> getBookingsByGuest() {
-        Map<Guest, List<Booking>> map = new HashMap<>();
-        for (Booking booking : bookings) {
-            Guest guest = booking.getGuest();
-            map.putIfAbsent(guest, new ArrayList<>());
-            map.get(guest).add(booking);
-        }
-        return map;
+        return bookings.stream()
+                .collect(Collectors.groupingBy(Booking::getGuest));
     }
+
 
     // Part 3: 1. -Homework 4
-    public String getMostFrequentRoomTypeBooked() {
-        Map<String, Integer> typeCount = new HashMap<>();
-        for (Booking booking : bookings) {
-            String type = booking.getRoom().getType().toString();
-            typeCount.put(type, typeCount.getOrDefault(type, 0) + 1);
-        }
+//    public String getMostFrequentRoomTypeBooked() {
+//        Map<String, Integer> typeCount = new HashMap<>();
+//        for (Booking booking : bookings) {
+//            String type = booking.getRoom().getType().toString();
+//            typeCount.put(type, typeCount.getOrDefault(type, 0) + 1);
+//        }
+//
+//        String mostFrequent = null;
+//        int maxCount = 0;
+//        for (Map.Entry<String, Integer> entry : typeCount.entrySet()) {
+//            if (entry.getValue() > maxCount) {
+//                maxCount = entry.getValue();
+//                mostFrequent = entry.getKey();
+//            }
+//        }
+//        return mostFrequent;
+//    }
 
-        String mostFrequent = null;
-        int maxCount = 0;
-        for (Map.Entry<String, Integer> entry : typeCount.entrySet()) {
-            if (entry.getValue() > maxCount) {
-                maxCount = entry.getValue();
-                mostFrequent = entry.getKey();
-            }
-        }
-        return mostFrequent;
+    // Part 3: 1. -Homework 5
+    public String getMostFrequentRoomTypeBooked() {
+        return bookings.stream()
+                .collect(Collectors.groupingBy(b -> b.getRoom().getType(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .map(e -> e.getKey().toString())
+                .orElse("None");
     }
+
+
 
     // Part 3: 2. -Homework 4
-    public Set<Guest> getGuestsWithMultipleBookings() {
-        Set<Guest> result = new HashSet<>();
-        Map<Guest, List<Booking>> map = getBookingsByGuest();
+//    public Set<Guest> getGuestsWithMultipleBookings() {
+//        Set<Guest> result = new HashSet<>();
+//        Map<Guest, List<Booking>> map = getBookingsByGuest();
+//
+//        for (Map.Entry<Guest, List<Booking>> entry : map.entrySet()) {
+//            if (entry.getValue().size() > 1) {
+//                result.add(entry.getKey());
+//            }
+//        }
+//        return result;
+//    }
 
-        for (Map.Entry<Guest, List<Booking>> entry : map.entrySet()) {
-            if (entry.getValue().size() > 1) {
-                result.add(entry.getKey());
-            }
-        }
-        return result;
+    //Part 3: 2. -Homework 5
+    public Set<Guest> getGuestsWithMultipleBookings() {
+        return bookings.stream()
+                .collect(Collectors.groupingBy(Booking::getGuest, Collectors.counting()))
+                .entrySet().stream()
+                .filter(e -> e.getValue() > 1)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
     }
+
 
     // Part 3 : 4.3 -Homework 4
+//    public Map<Staff, Integer> getStaffTaskCounts() {
+//        Map<Staff, Integer> taskMap = new HashMap<>();
+//        for (Staff s : staffMembers) {
+//            taskMap.put(s, s.getTasksCompleted());
+//        }
+//        return taskMap;
+//    }
+
+    // Part 3: 4. -Homework 5
     public Map<Staff, Integer> getStaffTaskCounts() {
-        Map<Staff, Integer> taskMap = new HashMap<>();
-        for (Staff s : staffMembers) {
-            taskMap.put(s, s.getTasksCompleted());
-        }
-        return taskMap;
+        return staffMembers.stream()
+                .collect(Collectors.toMap(staff -> staff, Staff::getTasksCompleted));
     }
+
 
     //Bonus : 2. -Homework 4
     public List<Room> getRoomsWithNoBookings() {
@@ -378,5 +456,53 @@ public class Hotel {
         return unbooked;
     }
 
+    // Part1 : 2. -Homework 5
+    public List<Room> getRoomsAboveRate(Double minRate) {
+        return rooms.stream()
+                .filter(room -> room.getNightlyRate().doubleValue() > minRate)
+                .toList();
+    }
+
+    //Part 1: 4. -Homework 5
+    public long countBookingsForGuest(Guest guest) {
+        return bookings.stream()
+                .filter(b -> b.getGuest().equals(guest))
+                .count();
+    }
+
+    // Part 2: 2. -Homework 5
+    public Optional<Room> getMostExpensiveRoom() {
+        return rooms.stream()
+                .max(Comparator.comparing(Room::getNightlyRate));
+    }
+
+    //Part 2: 3. -Homework 5
+    public boolean isAnyRoomAvailable() {
+        return rooms.stream()
+                .anyMatch(Room::isAvailable);
+    }
+
+    // Bonus: 1. -Homework 5
+    public Map<String, Double> getRevenueByRoomType() {
+        return bookings.stream()
+                .collect(Collectors.groupingBy(
+                        b -> b.getRoom().getType().toString(),
+                        Collectors.summingDouble(b -> b.getCost().doubleValue())
+                ));
+    }
+
+    // Bonus: 2. -Homework 5
+    public List<Room> getPartiallyBookedRooms(int threshold) {
+        Map<Room, Long> roomBookingNights = bookings.stream()
+                .collect(Collectors.groupingBy(
+                        Booking::getRoom,
+                        Collectors.summingLong(b -> ChronoUnit.DAYS.between(b.getCheckIn(), b.getCheckOut()))
+                ));
+
+        return roomBookingNights.entrySet().stream()
+                .filter(entry -> entry.getValue() < threshold)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
 
 }

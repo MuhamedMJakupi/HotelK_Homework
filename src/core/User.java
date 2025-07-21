@@ -1,22 +1,20 @@
 package core;
 
+import java.util.UUID;
+
 public class User {
-    protected String id;
+    private final String id;
     protected String name;
     protected String role;
 
-    public User(String id, String name, String role) {
-        this.id = id;
+    public User(String name, String role) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.role = role;
     }
 
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {
