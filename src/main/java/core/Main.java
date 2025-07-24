@@ -1,6 +1,5 @@
 package core;
 
-import Exceptions.DuplicateRoomException;
 import Exceptions.InvalidBookingDatesException;
 import Exceptions.RoomUnavailableException;
 import Service.HotelService;
@@ -13,6 +12,9 @@ import Staff.Manager;
 import Staff.Staff;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -315,8 +317,68 @@ public class Main {
         List<Room> partials = hotel.getPartiallyBookedRooms(3);
         partials.forEach(room -> System.out.println(room));
 
-    }
 
+        String url = "jdbc:mysql://localhost:3306/hotelkey";
+        String man = "root";
+        String password = "Mustafa_1903";
+
+        try (Connection conn = DriverManager.getConnection(url, man, password)) {
+            if (conn != null) {
+                System.out.println("✅ Connected to the database!");
+            } else {
+                System.out.println("❌ Connection failed.");
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Connection error: " + e.getMessage());
+        }
+
+        RoomService roomServiceDB = new RoomService("Cleaning", new BigDecimal("15"), new BigDecimal("5"),
+                "Room Service");
+
+        // Get All
+        List<Room> allRoomsAgain1 = roomServiceDB.getAll();
+        System.out.println("All Rooms:");
+        allRoomsAgain1.forEach(System.out::println);
+
+        // Insert Room
+        Room room = new Room(RoomType.DELUXE, new BigDecimal("120.00"), "505");
+        roomServiceDB.insert(room);
+
+        // Get All
+        List<Room> allRoomsAgain2 = roomServiceDB.getAll();
+        System.out.println("All Rooms:");
+        allRoomsAgain2.forEach(System.out::println);
+
+        // Get By ID
+        Room fetched = roomServiceDB.getById(room.getRoomID());
+        System.out.println("Fetched Room: " + fetched);
+
+        // Get All
+        List<Room> allRooms = roomServiceDB.getAll();
+        System.out.println("All Rooms:");
+        allRooms.forEach(System.out::println);
+
+        // Update Room
+        room.setNightlyRate(new BigDecimal("150.00"));
+        room.setRoomNumber("Updated505");
+        roomServiceDB.update(room);
+        System.out.println("Room updated.");
+
+        // Get All
+        List<Room> allRoomsAgain3 = roomServiceDB.getAll();
+        System.out.println("All Rooms:");
+        allRoomsAgain3.forEach(System.out::println);
+
+        // Delete Room
+        roomServiceDB.deleteById(room.getRoomID());
+        System.out.println("Room deleted.");
+
+        // Get All
+        List<Room> allRoomsAgain4 = roomServiceDB.getAll();
+        System.out.println("All Rooms:");
+        allRoomsAgain4.forEach(System.out::println);
+
+    }
 }
 
 

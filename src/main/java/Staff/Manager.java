@@ -2,7 +2,6 @@
 package Staff;
 
 import Exceptions.InvalidBookingDatesException;
-import core.Booking;
 import core.Guest;
 import core.Room;
 

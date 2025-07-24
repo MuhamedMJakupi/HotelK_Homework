@@ -4,7 +4,6 @@ import Interface.Bookable;
 import Interface.Chargeable;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 public class DeluxeRoom extends Room implements Chargeable, Bookable {
     private final int bedCapacity;

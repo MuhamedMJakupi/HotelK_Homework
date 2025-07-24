@@ -158,8 +158,4 @@ public class Room implements Bookable, Chargeable {
         return result;
     }
 
-
-
-
-
 }
