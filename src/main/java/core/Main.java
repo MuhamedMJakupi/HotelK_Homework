@@ -378,6 +378,10 @@ public class Main {
         System.out.println("All Rooms:");
         allRoomsAgain4.forEach(System.out::println);
 
+        System.out.println("Created a branch for Homework 7.");
+        System.out.println("No changes made in code, only in .sql file.");
+        System.out.println("Created for purpose to know that homework 7, wasn't skipped.");
+
     }
 }
 
