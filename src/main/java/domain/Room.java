@@ -8,8 +8,8 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class Room implements Bookable, Chargeable {
-    private final String roomID;
-    private final RoomType type;
+    private  String roomID;
+    private  RoomType type;
     private  BigDecimal nightlyRate;
     private boolean isAvailable;
     private Guest currentGuest;
@@ -158,4 +158,11 @@ public class Room implements Bookable, Chargeable {
         return result;
     }
 
+    public void setId(String id) {
+        this.roomID = id;
+    }
+
+    public void setType(RoomType type) {
+        this.type=type;
+    }
 }

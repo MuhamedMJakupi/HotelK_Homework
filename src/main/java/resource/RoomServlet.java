@@ -1,45 +1,55 @@
 package resource;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import domain.Room;
+import domain.RoomType;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.RoomService;
 
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
-//not working will check again
+// getting rooms directly on servlet
 @WebServlet("/rooms")
 public class RoomServlet extends HttpServlet {
-
-    private final RoomService roomService = new RoomService(
-            "Room JSON Service", new BigDecimal("10"), new BigDecimal("2"), "Service");
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        List<Room> rooms = roomService.getAll();  // get from DB
-        Gson gson = new Gson();
-        String json = gson.toJson(rooms);
+        List<Room> rooms = new ArrayList<>();
+
+        try (Connection conn = DBUtil.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM room")) {
+
+            while (rs.next()) {
+                Room r = new Room();
+                r.setId(rs.getString("id"));
+                r.setRoomNumber(rs.getString("roomNumber"));
+                r.setType(RoomType.valueOf(rs.getString("type")));
+                r.setNightlyRate(rs.getBigDecimal("nightlyRate"));
+                r.setAvailable(rs.getBoolean("isAvailable"));
+                rooms.add(r);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().write(json);
+        PrintWriter out = resp.getWriter();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .create();
 
-        System.out.println("Rooms found: " + rooms.size());
-        rooms.forEach(System.out::println);
-
-        System.out.println("ROOMS FROM DB:");
-        rooms.forEach(r -> System.out.println("Room: " + r.getRoomNumber()));
-
-
+        out.print(gson.toJson(rooms));
     }
-
-
 }
-
-
-
